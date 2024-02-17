@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información de Personajes de Cómics</title>
+    <!-- Estilos CSS para la apariencia de la página -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #characterInfo {
+            margin-top: 20px;
+        }
+
+        #characterInfo img {
+            max-width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Contenido de la página -->
+    <div class="container">
+        <!-- Título de la página -->
+        <h1>Información de Personajes de Cómics</h1>
+
+        <!-- Campo de entrada para el nombre del personaje -->
+        <label for="characterInput">Ingresa el nombre de un personaje:</label>
+        <input type="text" id="characterInput" placeholder="Escribe el nombre del personaje">
+
+        <!-- Botón para realizar la búsqueda -->
+        <button id="searchButton">Buscar</button>
+
+        <!-- Contenedor donde se mostrará la información del personaje -->
+        <div id="characterInfo">
+            <!-- Aquí se mostrará la información del personaje -->
+        </div>
+    </div>
+
+    <!-- Script de JavaScript para realizar la búsqueda y mostrar la información -->
+    <script>
+        // Esperar a que el contenido del DOM esté cargado
+        document.addEventListener("DOMContentLoaded", function() {
+            // Obtener elementos del DOM
+            const characterInput = document.getElementById("characterInput");
+            const searchButton = document.getElementById("searchButton");
+            const characterInfo = document.getElementById("characterInfo");
+
+            // Agregar event listener al botón de búsqueda
+            searchButton.addEventListener("click", function() {
+                // Obtener el nombre del personaje ingresado por el usuario
+                const characterName = characterInput.value.trim();
+
+                // Validar que se haya ingresado un nombre de personaje
+                if (characterName === "") {
+                    alert("Por favor, ingresa un nombre de personaje válido.");
+                    return;
+                }
+
+                // Realizar la solicitud a la API de SuperheroAPI
+                fetch(`https://www.superheroapi.com/api.php/122157382358031503/search/${characterName}`)
+                    .then(response => response.json()) // Convertir la respuesta a JSON
+                    .then(data => {
+                        // Obtener el primer personaje de la respuesta
+                        const character = data.results[0];
+                        if (character) {
+                            // Obtener el nombre y la URL de la imagen del personaje
+                            const characterName = character.name;
+                            const characterImage = character.image.url;
+
+                            // Construir la información del personaje y mostrarla en la página
+                            const characterHTML = `
+                                <h2>${characterName}</h2>
+                                <img src="${characterImage}" alt="${characterName}">
+                            `;
+                            characterInfo.innerHTML = characterHTML;
+                        } else {
+                            // Mostrar mensaje si no se encontró ningún personaje con ese nombre
+                            alert("No se encontró ningún personaje con ese nombre.");
+                        }
+                    })
+                    .catch(error => {
+                        // Mostrar mensaje si hay un error al obtener los datos del personaje
+                        console.error("Error al obtener datos del personaje:", error);
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
